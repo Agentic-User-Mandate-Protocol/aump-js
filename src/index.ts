@@ -360,14 +360,25 @@ function validateUcpReference(payload: Record<string, any>): {
   errors: string[];
 } {
   const errors: string[] = [];
-  if (!payload.aump) return { valid: false, errors: ["missing aump reference object"] };
-  if (payload.aump.mandate) {
+  const aump = findUcpAumpRef(payload);
+  if (!aump) return { valid: false, errors: ["missing aump reference object"] };
+  if (aump.mandate) {
     errors.push("UCP/AP2 bridge must not embed full private AUMP mandate");
   }
   for (const field of ["mandate_id", "mandate_hash", "version"]) {
-    if (!payload.aump[field]) errors.push(`missing aump.${field}`);
+    if (!aump[field]) errors.push(`missing aump.${field}`);
   }
   return { valid: errors.length === 0, errors };
+}
+
+function findUcpAumpRef(payload: Record<string, any>): Record<string, any> | undefined {
+  if (payload.aump && typeof payload.aump === "object") {
+    return payload.aump;
+  }
+  if (payload.meta?.aump && typeof payload.meta.aump === "object") {
+    return payload.meta.aump;
+  }
+  return undefined;
 }
 
 function findFirstMeta(value: unknown): Record<string, any> | undefined {

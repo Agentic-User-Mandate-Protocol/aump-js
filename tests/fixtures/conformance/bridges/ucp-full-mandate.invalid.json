@@ -1,11 +1,16 @@
 {
-  "aump": {
-    "mandate_id": "aump_mnd_shop_001",
-    "mandate_hash": "sha256-example",
-    "version": "0.1.0",
-    "mandate": {
-      "id": "aump_mnd_shop_001",
-      "private": true
+  "meta": {
+    "ucp-agent": {
+      "profile": "https://platform.example/profiles/shopping-agent.json"
+    },
+    "aump": {
+      "mandate_id": "aump_mnd_shop_001",
+      "mandate_hash": "sha256-example",
+      "version": "0.1.0",
+      "mandate": {
+        "id": "aump_mnd_shop_001",
+        "private": true
+      }
     }
   },
   "checkout": {
