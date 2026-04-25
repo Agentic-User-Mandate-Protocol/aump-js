@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-user-mandate-protocol.github.io/spec/schemas/profile.schema.json",
+  "title": "AUMP Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["aump", "issuer", "supported_versions", "schemas", "bindings"],
+  "properties": {
+    "aump": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "type"],
+      "properties": {
+        "version": { "type": "string" },
+        "type": { "const": "profile" }
+      }
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "homepage_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "supported_versions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "schemas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mandate", "profile"],
+      "properties": {
+        "mandate": { "type": "string", "format": "uri" },
+        "profile": { "type": "string", "format": "uri" }
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mcp": { "$ref": "#/$defs/binding" },
+        "a2a": { "$ref": "#/$defs/binding" },
+        "ucp_ap2": { "$ref": "#/$defs/binding" },
+        "rest": { "$ref": "#/$defs/binding" }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": { "type": "string", "format": "uri" },
+        "supports_status_list": { "type": "boolean" }
+      }
+    },
+    "signing_keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["kid", "kty"],
+        "properties": {
+          "kid": { "type": "string" },
+          "kty": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supported"],
+      "properties": {
+        "supported": { "type": "boolean" },
+        "endpoint": { "type": "string", "format": "uri" },
+        "spec": { "type": "string", "format": "uri" },
+        "methods": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

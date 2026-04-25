@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-user-mandate-protocol.github.io/spec/schemas/action-evaluation.schema.json",
+  "title": "AUMP Action Evaluation",
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/response" }
+  ],
+  "$defs": {
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aump", "mandate_ref", "proposed_action"],
+      "properties": {
+        "aump": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "type"],
+          "properties": {
+            "version": { "type": "string" },
+            "type": { "const": "action_evaluation_request" }
+          }
+        },
+        "mandate_ref": { "$ref": "#/$defs/mandateRef" },
+        "proposed_action": { "$ref": "#/$defs/action" },
+        "context": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aump", "mandate_ref", "decision"],
+      "properties": {
+        "aump": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "type"],
+          "properties": {
+            "version": { "type": "string" },
+            "type": { "const": "action_evaluation_response" }
+          }
+        },
+        "mandate_ref": { "$ref": "#/$defs/mandateRef" },
+        "decision": {
+          "type": "string",
+          "enum": ["allowed", "requires_escalation", "denied"]
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "summary": { "type": "string" },
+        "required_escalation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "channel": { "type": "string" },
+            "prompt": { "type": "string" },
+            "expires_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    },
+    "mandateRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "hash": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "version": { "type": "string" }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["type", "summary"],
+      "properties": {
+        "type": { "type": "string" },
+        "summary": { "type": "string" },
+        "counterparty": { "type": "string" },
+        "amount": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["currency", "total_minor"],
+          "properties": {
+            "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+            "total_minor": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "disclosures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["field", "content"],
+            "properties": {
+              "field": { "type": "string" },
+              "content": { "type": "string" }
+            }
+          }
+        },
+        "downstream_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["protocol", "id"],
+            "properties": {
+              "protocol": { "type": "string" },
+              "id": { "type": "string" },
+              "hash": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
