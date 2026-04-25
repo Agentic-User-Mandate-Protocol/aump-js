@@ -1,0 +1,11 @@
+{
+  "type": "make_offer",
+  "summary": "Tell the seller the buyer's maximum budget.",
+  "counterparty": "seller_123",
+  "disclosures": [
+    {
+      "field": "negotiation.reservation_price_minor",
+      "content": "The buyer can pay up to 5 USD."
+    }
+  ]
+}

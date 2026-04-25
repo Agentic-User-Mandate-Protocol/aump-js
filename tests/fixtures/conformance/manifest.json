@@ -1,0 +1,206 @@
+{
+  "aump_conformance": {
+    "name": "AUMP v0.1 conformance",
+    "version": "0.1.0",
+    "spec_version": "0.1.0",
+    "spec_commit": "c8abb290f97e14d69a0cdb4a28b45d2e63522aef"
+  },
+  "defaults": {
+    "now": "2026-04-25T18:00:00Z"
+  },
+  "cases": [
+    {
+      "id": "schema.mandate.marketplace_buyer.valid",
+      "category": "schema",
+      "title": "Marketplace buyer mandate validates against the mandate schema.",
+      "schema": "mandate",
+      "path": "mandates/marketplace-buyer.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "schema.mandate.marketplace_seller.valid",
+      "category": "schema",
+      "title": "Marketplace seller mandate validates against the mandate schema.",
+      "schema": "mandate",
+      "path": "mandates/marketplace-seller.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "schema.mandate.delegated_shopping.valid",
+      "category": "schema",
+      "title": "Delegated shopping mandate validates against the mandate schema.",
+      "schema": "mandate",
+      "path": "mandates/delegated-shopping.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "schema.profile.default.valid",
+      "category": "schema",
+      "title": "AUMP profile validates against the profile schema.",
+      "schema": "profile",
+      "path": "profiles/aump-profile.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "schema.mandate.missing_aump.invalid",
+      "category": "schema",
+      "title": "Mandate without aump metadata is schema-invalid.",
+      "schema": "mandate",
+      "path": "mandates/marketplace-buyer.missing-aump.json",
+      "expect": "invalid"
+    },
+    {
+      "id": "mandate.marketplace_buyer.active.valid",
+      "category": "mandate",
+      "title": "Active unexpired marketplace buyer mandate is usable.",
+      "path": "mandates/marketplace-buyer.valid.json",
+      "expect": "valid",
+      "reason_codes": []
+    },
+    {
+      "id": "mandate.inactive.invalid",
+      "category": "mandate",
+      "title": "Inactive mandate is rejected before autonomous action.",
+      "path": "mandates/marketplace-buyer.inactive.json",
+      "expect": "invalid",
+      "reason_codes": ["mandate_inactive"]
+    },
+    {
+      "id": "mandate.expired.invalid",
+      "category": "mandate",
+      "title": "Expired mandate is rejected before autonomous action.",
+      "path": "mandates/marketplace-buyer.expired.json",
+      "expect": "invalid",
+      "reason_codes": ["mandate_expired"]
+    },
+    {
+      "id": "action.buyer.accept_ping_pong.allowed",
+      "category": "action",
+      "title": "Buyer can accept a deal within delegated budget.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "action": "actions/accept-ping-pong.allowed.json",
+      "expect": "allowed",
+      "reason_codes": []
+    },
+    {
+      "id": "action.buyer.over_budget.denied",
+      "category": "action",
+      "title": "Buyer cannot accept an offer above max_total_minor.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "action": "actions/accept-over-budget.denied.json",
+      "expect": "denied",
+      "reason_codes": ["hard_constraint_violation", "price_above_budget"]
+    },
+    {
+      "id": "action.buyer.currency_mismatch.denied",
+      "category": "action",
+      "title": "Buyer cannot accept an offer in the wrong currency.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "action": "actions/wrong-currency.denied.json",
+      "expect": "denied",
+      "reason_codes": ["hard_constraint_violation", "currency_mismatch"]
+    },
+    {
+      "id": "action.buyer.disclose_purpose.allowed",
+      "category": "action",
+      "title": "Buyer can disclose allowed purpose summary.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "action": "actions/disclose-purpose.allowed.json",
+      "expect": "allowed",
+      "reason_codes": []
+    },
+    {
+      "id": "action.buyer.reveal_reservation.denied",
+      "category": "action",
+      "title": "Buyer cannot reveal protected reservation price.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "action": "actions/reveal-reservation.denied.json",
+      "expect": "denied",
+      "reason_codes": ["disclosure_denied"]
+    },
+    {
+      "id": "action.shopping.checkout_ready.escalates",
+      "category": "action",
+      "title": "Shopping mandate escalates at checkout-ready boundary.",
+      "mandate": "mandates/delegated-shopping.valid.json",
+      "action": "actions/create-cart-checkout-ready.escalation.json",
+      "context": {
+        "conditions": ["checkout_ready"]
+      },
+      "expect": "requires_escalation",
+      "reason_codes": ["escalation_required"]
+    },
+    {
+      "id": "action.shopping.low_confidence.escalates",
+      "category": "action",
+      "title": "Shopping mandate escalates below confidence threshold.",
+      "mandate": "mandates/delegated-shopping.valid.json",
+      "action": "actions/create-cart-checkout-ready.escalation.json",
+      "context": {
+        "confidence": 0.5
+      },
+      "expect": "requires_escalation",
+      "reason_codes": ["escalation_required", "confidence_below_threshold"]
+    },
+    {
+      "id": "action.seller.offer_below_target.escalates",
+      "category": "action",
+      "title": "Seller mandate escalates a counteroffer below target.",
+      "mandate": "mandates/marketplace-seller.valid.json",
+      "action": "actions/seller-counteroffer.escalation.json",
+      "context": {
+        "conditions": ["offer_below_target"]
+      },
+      "expect": "requires_escalation",
+      "reason_codes": ["escalation_required"]
+    },
+    {
+      "id": "bridge.mcp.evaluate_action_meta.valid",
+      "category": "bridge",
+      "title": "MCP tool call carries AUMP mandate references in valid _meta keys.",
+      "bridge_type": "mcp_meta",
+      "path": "bridges/mcp-evaluate-action-tool-call.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "bridge.mcp.reserved_meta.invalid",
+      "category": "bridge",
+      "title": "MCP bridge rejects reserved MCP metadata prefixes for AUMP keys.",
+      "bridge_type": "mcp_meta",
+      "path": "bridges/mcp-reserved-meta.invalid.json",
+      "expect": "invalid"
+    },
+    {
+      "id": "bridge.a2a.agent_card_extension.valid",
+      "category": "bridge",
+      "title": "A2A agent card advertises the AUMP extension URI.",
+      "bridge_type": "a2a_extension",
+      "path": "bridges/a2a-agent-card-extension.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "bridge.a2a.message_metadata.valid",
+      "category": "bridge",
+      "title": "A2A message carries mandate id and hash metadata.",
+      "bridge_type": "a2a_message",
+      "path": "bridges/a2a-message-mandate-ref.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "bridge.ucp.aump_reference.valid",
+      "category": "bridge",
+      "title": "UCP payload carries an AUMP reference without private mandate fields.",
+      "bridge_type": "ucp_reference",
+      "path": "bridges/ucp-aump-reference.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "bridge.ucp.full_mandate.invalid",
+      "category": "bridge",
+      "title": "UCP payload must not embed the full private AUMP mandate.",
+      "bridge_type": "ucp_reference",
+      "path": "bridges/ucp-full-mandate.invalid.json",
+      "expect": "invalid"
+    }
+  ]
+}

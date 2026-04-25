@@ -1,0 +1,14 @@
+{
+  "jsonrpc": "2.0",
+  "id": "call_002",
+  "method": "tools/call",
+  "params": {
+    "name": "aump.evaluate_action",
+    "arguments": {
+      "_meta": {
+        "io.modelcontextprotocol/aump_mandate_id": "aump_mnd_market_buyer_001",
+        "org.agentic-user-mandate-protocol/aump_mandate_hash": "sha256-example"
+      }
+    }
+  }
+}

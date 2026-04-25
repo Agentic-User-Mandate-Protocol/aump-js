@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-user-mandate-protocol.github.io/spec/schemas/mandate.schema.json",
+  "title": "AUMP Mandate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "aump",
+    "id",
+    "status",
+    "issued_at",
+    "expires_at",
+    "principal",
+    "agent",
+    "purpose",
+    "authority",
+    "preferences",
+    "negotiation",
+    "disclosure",
+    "escalation",
+    "evidence"
+  ],
+  "properties": {
+    "aump": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "type"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "type": { "const": "mandate" }
+      }
+    },
+    "id": { "type": "string", "pattern": "^aump_mnd_[A-Za-z0-9_-]+$" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "presented", "active", "suspended", "revoked", "expired", "superseded"]
+    },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "supersedes": { "type": "string" },
+    "principal": { "$ref": "#/$defs/principal" },
+    "agent": { "$ref": "#/$defs/agent" },
+    "purpose": { "$ref": "#/$defs/purpose" },
+    "authority": { "$ref": "#/$defs/authority" },
+    "preferences": { "$ref": "#/$defs/preferences" },
+    "negotiation": { "$ref": "#/$defs/negotiation" },
+    "disclosure": { "$ref": "#/$defs/disclosure" },
+    "escalation": { "$ref": "#/$defs/escalation" },
+    "evidence": { "$ref": "#/$defs/evidencePolicy" },
+    "signatures": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/signature" }
+    },
+    "links": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/link" }
+    }
+  },
+  "$defs": {
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "display_name"],
+      "properties": {
+        "type": { "type": "string", "enum": ["person", "household", "organization", "team", "service_account"] },
+        "display_name": { "type": "string", "minLength": 1 },
+        "subject": { "type": "string" },
+        "jurisdiction": { "type": "string" }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "provider": { "type": "string" },
+        "model": { "type": "string" },
+        "a2a_agent_card_url": { "type": "string", "format": "uri" },
+        "mcp_client_id": { "type": "string" }
+      }
+    },
+    "purpose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "domain", "intent"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "domain": { "type": "string", "minLength": 1 },
+        "intent": { "type": "string", "minLength": 1 },
+        "allowed_categories": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "allowed_counterparties": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "excluded_counterparties": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "permissions", "prohibited_actions"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["advisory", "supervised", "delegated"] },
+        "budget": { "$ref": "#/$defs/budget" },
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "requires_trusted_ui_for_commitment": { "type": "boolean", "default": true }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currency", "max_total_minor"],
+      "properties": {
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "max_total_minor": { "type": "integer", "minimum": 0 },
+        "max_item_minor": { "type": "integer", "minimum": 0 },
+        "max_shipping_minor": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hard_constraints", "soft_preferences", "dealbreakers"],
+      "properties": {
+        "hard_constraints": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/preferenceRule" }
+        },
+        "soft_preferences": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/preferenceRule" }
+        },
+        "ranked_needs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "acceptable_substitutes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dealbreakers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "private_notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "preferenceRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "protected": { "type": "boolean", "default": false }
+      }
+    },
+    "negotiation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "communication_style", "max_rounds", "walk_away_conditions"],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["friendly", "firm", "value_seeking", "speed_first", "relationship_first", "custom"]
+        },
+        "communication_style": { "type": "string" },
+        "target_price_minor": { "type": "integer", "minimum": 0 },
+        "reservation_price_minor": { "type": "integer", "minimum": 0 },
+        "opening_offer_minor": { "type": "integer", "minimum": 0 },
+        "concession_policy": { "type": "string" },
+        "max_rounds": { "type": "integer", "minimum": 0 },
+        "bundle_allowed": { "type": "boolean", "default": false },
+        "trade_allowed": { "type": "boolean", "default": false },
+        "walk_away_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "protected_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "disclosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default", "allowed", "prohibited"],
+      "properties": {
+        "default": { "type": "string", "enum": ["deny", "allow"] },
+        "allowed": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/disclosureRule" }
+        },
+        "prohibited": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/disclosureRule" }
+        },
+        "public_summary": { "type": "string" }
+      }
+    },
+    "disclosureRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "condition"],
+      "properties": {
+        "field": { "type": "string" },
+        "condition": { "type": "string" },
+        "counterparty_scope": { "type": "string" }
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_conditions", "contact_modes"],
+      "properties": {
+        "required_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confidence_threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+        "contact_modes": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["app", "email", "sms", "trusted_ui", "wallet", "none"] }
+        },
+        "approval_timeout_seconds": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "evidencePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retention", "events_required"],
+      "properties": {
+        "retention": { "type": "string", "enum": ["none", "summary_only", "hashes", "full_transcript"] },
+        "events_required": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "transcript_hash_alg": { "type": "string", "enum": ["sha-256", "sha-384", "sha-512"] },
+        "store_private_fields": { "type": "boolean", "default": false }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "alg", "kid", "value"],
+      "properties": {
+        "type": { "type": "string", "enum": ["jws-detached", "jws", "vc-sd-jwt"] },
+        "alg": { "type": "string" },
+        "kid": { "type": "string" },
+        "value": { "type": "string" }
+      }
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "url"],
+      "properties": {
+        "type": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "title": { "type": "string" }
+      }
+    }
+  }
+}

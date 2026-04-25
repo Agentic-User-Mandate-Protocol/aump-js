@@ -1,0 +1,5 @@
+{
+  "type": "make_counteroffer",
+  "summary": "Counter a buyer's offer below target.",
+  "counterparty": "local_buyer_001"
+}

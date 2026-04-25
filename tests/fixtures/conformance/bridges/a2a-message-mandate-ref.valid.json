@@ -1,0 +1,14 @@
+{
+  "message": {
+    "role": "user",
+    "parts": [
+      {
+        "text": "Negotiate for this listing."
+      }
+    ],
+    "metadata": {
+      "aump_mandate_id": "aump_mnd_market_buyer_001",
+      "aump_mandate_hash": "sha256-example"
+    }
+  }
+}

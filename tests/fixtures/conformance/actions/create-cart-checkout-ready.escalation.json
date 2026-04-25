@@ -1,0 +1,9 @@
+{
+  "type": "create_cart",
+  "summary": "Create a cart for the selected running shoes.",
+  "counterparty": "merchant_456",
+  "amount": {
+    "currency": "USD",
+    "total_minor": 12900
+  }
+}

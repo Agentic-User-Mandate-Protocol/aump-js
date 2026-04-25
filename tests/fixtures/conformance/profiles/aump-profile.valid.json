@@ -1,0 +1,53 @@
+{
+  "aump": {
+    "version": "0.1.0",
+    "type": "profile"
+  },
+  "issuer": {
+    "id": "https://agent.example.com",
+    "name": "Example AUMP Issuer",
+    "homepage_url": "https://agent.example.com"
+  },
+  "supported_versions": ["0.1.0"],
+  "schemas": {
+    "mandate": "https://agentic-user-mandate-protocol.github.io/spec/schemas/mandate.schema.json",
+    "profile": "https://agentic-user-mandate-protocol.github.io/spec/schemas/profile.schema.json"
+  },
+  "bindings": {
+    "mcp": {
+      "supported": true,
+      "endpoint": "https://agent.example.com/mcp",
+      "spec": "https://agentic-user-mandate-protocol.github.io/spec/bindings/mcp",
+      "methods": ["aump.resolve_mandate", "aump.evaluate_action", "aump.append_evidence"]
+    },
+    "a2a": {
+      "supported": true,
+      "endpoint": "https://agent.example.com/.well-known/agent-card.json",
+      "spec": "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a",
+      "methods": ["message.metadata.aump_mandate_id"]
+    },
+    "ucp_ap2": {
+      "supported": true,
+      "spec": "https://agentic-user-mandate-protocol.github.io/spec/bindings/ucp-ap2",
+      "methods": ["aump.mandate_id", "aump.mandate_hash"]
+    },
+    "rest": {
+      "supported": true,
+      "endpoint": "https://agent.example.com/aump",
+      "spec": "https://agentic-user-mandate-protocol.github.io/spec/bindings/rest",
+      "methods": ["POST /mandates", "POST /mandates/{id}:evaluateAction"]
+    }
+  },
+  "revocation": {
+    "endpoint": "https://agent.example.com/aump/revocations",
+    "supports_status_list": false
+  },
+  "signing_keys": [
+    {
+      "kid": "example-key-1",
+      "kty": "EC",
+      "crv": "P-256",
+      "use": "sig"
+    }
+  ]
+}

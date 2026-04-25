@@ -1,0 +1,111 @@
+{
+  "aump": {
+    "version": "0.1.0",
+    "type": "mandate"
+  },
+  "id": "aump_mnd_market_seller_001",
+  "status": "active",
+  "issued_at": "2026-04-25T15:00:00Z",
+  "expires_at": "2026-04-30T15:00:00Z",
+  "principal": {
+    "type": "person",
+    "display_name": "Example Seller"
+  },
+  "agent": {
+    "id": "agent_seller_001",
+    "name": "Seller Agent",
+    "provider": "Example Platform"
+  },
+  "purpose": {
+    "summary": "Sell a used folding bike locally.",
+    "domain": "classified_marketplace",
+    "intent": "Find a buyer who can pick up locally and pay a fair price.",
+    "allowed_categories": ["bicycles"],
+    "allowed_counterparties": ["local_buyers"]
+  },
+  "authority": {
+    "mode": "supervised",
+    "budget": {
+      "currency": "USD",
+      "max_total_minor": 0
+    },
+    "permissions": ["create_listing", "answer_questions", "make_counteroffer"],
+    "prohibited_actions": ["accept_deal_without_approval", "share_home_address"],
+    "requires_trusted_ui_for_commitment": true
+  },
+  "preferences": {
+    "hard_constraints": [
+      {
+        "id": "local_pickup_only",
+        "description": "Buyer must be able to pick up locally.",
+        "protected": false
+      }
+    ],
+    "soft_preferences": [
+      {
+        "id": "fair_price",
+        "description": "Prefer 65 USD or more if buyer seems serious.",
+        "weight": 0.9,
+        "protected": true
+      }
+    ],
+    "ranked_needs": ["safe_exchange", "fair_price", "fast_pickup"],
+    "acceptable_substitutes": [],
+    "dealbreakers": ["shipping_required", "unsafe_meeting_location"],
+    "private_notes": ["Minimum acceptable price is 45 USD but do not reveal this."]
+  },
+  "negotiation": {
+    "strategy": "value_seeking",
+    "communication_style": "Friendly, honest about condition, firm on local pickup.",
+    "target_price_minor": 6500,
+    "reservation_price_minor": 4500,
+    "opening_offer_minor": 7500,
+    "concession_policy": "Concede in 5 to 10 USD steps, but ask for user approval before accepting.",
+    "max_rounds": 4,
+    "bundle_allowed": false,
+    "trade_allowed": false,
+    "walk_away_conditions": ["offer_below_4500_minor", "buyer_requires_shipping"],
+    "protected_fields": ["reservation_price_minor", "private_notes"]
+  },
+  "disclosure": {
+    "default": "deny",
+    "allowed": [
+      {
+        "field": "purpose.summary",
+        "condition": "Allowed in listing."
+      },
+      {
+        "field": "preferences.hard_constraints",
+        "condition": "Allowed when relevant to pickup or safety."
+      }
+    ],
+    "prohibited": [
+      {
+        "field": "negotiation.reservation_price_minor",
+        "condition": "Never reveal to buyer."
+      },
+      {
+        "field": "preferences.private_notes",
+        "condition": "Never reveal to buyer."
+      }
+    ],
+    "public_summary": "Seller wants a safe local pickup and a fair price."
+  },
+  "escalation": {
+    "required_conditions": [
+      "any_deal_acceptance",
+      "offer_below_target",
+      "counterparty_requests_private_location",
+      "hard_constraint_conflict"
+    ],
+    "confidence_threshold": 0.75,
+    "contact_modes": ["app", "trusted_ui"],
+    "approval_timeout_seconds": 3600
+  },
+  "evidence": {
+    "retention": "summary_only",
+    "events_required": ["listing_created", "offer_received", "counteroffer_sent", "approval_requested"],
+    "transcript_hash_alg": "sha-256",
+    "store_private_fields": false
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "aump": {
+    "version": "0.1.0",
+    "type": "mandate"
+  },
+  "id": "aump_mnd_market_buyer_001",
+  "status": "active",
+  "issued_at": "2026-04-25T15:00:00Z",
+  "expires_at": "2026-04-26T15:00:00Z",
+  "principal": {
+    "type": "person",
+    "display_name": "Example Buyer"
+  },
+  "agent": {
+    "id": "agent_buyer_001",
+    "name": "Buyer Agent",
+    "provider": "Example Platform"
+  },
+  "purpose": {
+    "summary": "Find and negotiate for used creative supplies.",
+    "domain": "classified_marketplace",
+    "intent": "Buy unusual art or hobby supplies under budget.",
+    "allowed_categories": ["art_supplies", "hobby_supplies", "books"]
+  },
+  "authority": {
+    "mode": "delegated",
+    "budget": {
+      "currency": "USD",
+      "max_total_minor": 500,
+      "max_item_minor": 500
+    },
+    "permissions": ["search_listings", "make_offer", "counteroffer", "accept_deal"],
+    "prohibited_actions": ["share_payment_credentials", "reveal_max_budget"],
+    "requires_trusted_ui_for_commitment": false
+  },
+  "preferences": {
+    "hard_constraints": [
+      {
+        "id": "under_budget",
+        "description": "Total price must be 5 USD or less.",
+        "protected": false
+      }
+    ],
+    "soft_preferences": [
+      {
+        "id": "weird_and_delightful",
+        "description": "Prefer items that are unusual, playful, or useful for creative projects.",
+        "weight": 0.8,
+        "protected": false
+      }
+    ],
+    "ranked_needs": ["low_price", "creative_potential", "easy_pickup"],
+    "acceptable_substitutes": ["small tools", "craft materials", "novel desk objects"],
+    "dealbreakers": ["requires shipping", "damaged in unsafe way"],
+    "private_notes": ["Do not mention that 5 USD is the full budget."]
+  },
+  "negotiation": {
+    "strategy": "friendly",
+    "communication_style": "Warm and concise.",
+    "target_price_minor": 300,
+    "reservation_price_minor": 500,
+    "opening_offer_minor": 300,
+    "concession_policy": "Increase only if the item strongly matches preferences.",
+    "max_rounds": 3,
+    "bundle_allowed": true,
+    "trade_allowed": false,
+    "walk_away_conditions": ["price_above_500_minor", "counterparty_requests_private_info"],
+    "protected_fields": ["reservation_price_minor", "private_notes"]
+  },
+  "disclosure": {
+    "default": "deny",
+    "allowed": [
+      {
+        "field": "purpose.summary",
+        "condition": "Always safe to share."
+      },
+      {
+        "field": "preferences.soft_preferences",
+        "condition": "Share only as natural language taste, not weights."
+      }
+    ],
+    "prohibited": [
+      {
+        "field": "negotiation.reservation_price_minor",
+        "condition": "Never reveal to counterparty."
+      },
+      {
+        "field": "preferences.private_notes",
+        "condition": "Never reveal to counterparty."
+      }
+    ],
+    "public_summary": "Buyer is looking for low-cost creative supplies."
+  },
+  "escalation": {
+    "required_conditions": [
+      "price_above_budget",
+      "counterparty_requests_payment_credentials",
+      "hard_constraint_conflict",
+      "confidence_below_threshold"
+    ],
+    "confidence_threshold": 0.65,
+    "contact_modes": ["app", "trusted_ui"],
+    "approval_timeout_seconds": 900
+  },
+  "evidence": {
+    "retention": "hashes",
+    "events_required": ["offer_sent", "counteroffer_received", "deal_accepted", "escalation_requested"],
+    "transcript_hash_alg": "sha-256",
+    "store_private_fields": false
+  }
+}

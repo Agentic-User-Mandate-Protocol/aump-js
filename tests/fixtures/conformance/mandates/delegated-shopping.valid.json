@@ -1,0 +1,133 @@
+{
+  "aump": {
+    "version": "0.1.0",
+    "type": "mandate"
+  },
+  "id": "aump_mnd_shop_001",
+  "status": "active",
+  "issued_at": "2026-04-25T15:00:00Z",
+  "expires_at": "2026-05-02T15:00:00Z",
+  "principal": {
+    "type": "person",
+    "display_name": "Example Shopper"
+  },
+  "agent": {
+    "id": "agent_shop_001",
+    "name": "Shopping Agent",
+    "provider": "Example Platform",
+    "a2a_agent_card_url": "https://agent.example.com/.well-known/agent-card.json"
+  },
+  "purpose": {
+    "summary": "Find durable white running shoes.",
+    "domain": "shopping",
+    "intent": "Buy running shoes suitable for daily outdoor use.",
+    "allowed_categories": ["running_shoes"],
+    "excluded_counterparties": ["unknown_marketplaces"]
+  },
+  "authority": {
+    "mode": "supervised",
+    "budget": {
+      "currency": "USD",
+      "max_total_minor": 15000,
+      "max_item_minor": 14000,
+      "max_shipping_minor": 1500
+    },
+    "permissions": ["search_catalog", "compare_items", "create_cart"],
+    "prohibited_actions": ["complete_checkout_without_review", "change_shipping_address"],
+    "requires_trusted_ui_for_commitment": true
+  },
+  "preferences": {
+    "hard_constraints": [
+      {
+        "id": "white_color",
+        "description": "Shoes must be primarily white.",
+        "protected": false
+      },
+      {
+        "id": "returnable",
+        "description": "Shoes must be returnable for at least 30 days.",
+        "protected": false
+      }
+    ],
+    "soft_preferences": [
+      {
+        "id": "durability",
+        "description": "Prefer durable outsole and strong reviews for outdoor running.",
+        "weight": 0.9,
+        "protected": false
+      },
+      {
+        "id": "fast_delivery",
+        "description": "Prefer delivery within five days.",
+        "weight": 0.4,
+        "protected": false
+      }
+    ],
+    "ranked_needs": ["fit", "durability", "returnability", "price"],
+    "acceptable_substitutes": ["off-white if mostly white and better durability"],
+    "dealbreakers": ["final_sale", "no_size_match", "price_above_budget"],
+    "private_notes": ["Do not reveal that the user needs these urgently."]
+  },
+  "negotiation": {
+    "strategy": "value_seeking",
+    "communication_style": "Concise and practical.",
+    "target_price_minor": 11000,
+    "reservation_price_minor": 15000,
+    "opening_offer_minor": 9500,
+    "concession_policy": "Prefer discounts or free shipping before increasing price.",
+    "max_rounds": 2,
+    "bundle_allowed": false,
+    "trade_allowed": false,
+    "walk_away_conditions": ["not_returnable", "price_above_15000_minor"],
+    "protected_fields": ["reservation_price_minor", "private_notes"]
+  },
+  "disclosure": {
+    "default": "deny",
+    "allowed": [
+      {
+        "field": "purpose.intent",
+        "condition": "Allowed for product search and merchant questions."
+      },
+      {
+        "field": "preferences.hard_constraints",
+        "condition": "Allowed when validating product fit."
+      }
+    ],
+    "prohibited": [
+      {
+        "field": "preferences.private_notes",
+        "condition": "Never reveal urgency."
+      },
+      {
+        "field": "negotiation.reservation_price_minor",
+        "condition": "Never reveal maximum budget."
+      }
+    ],
+    "public_summary": "Shopper wants durable white running shoes with a reasonable return policy."
+  },
+  "escalation": {
+    "required_conditions": [
+      "checkout_ready",
+      "ucp_requires_buyer_review",
+      "ap2_signature_required",
+      "hard_constraint_conflict",
+      "price_above_target"
+    ],
+    "confidence_threshold": 0.8,
+    "contact_modes": ["trusted_ui", "wallet"],
+    "approval_timeout_seconds": 1800
+  },
+  "evidence": {
+    "retention": "hashes",
+    "events_required": ["cart_created", "checkout_presented", "ap2_intent_created", "approval_requested"],
+    "transcript_hash_alg": "sha-256",
+    "store_private_fields": false
+  },
+  "links": [
+    {
+      "type": "ucp_checkout_binding",
+      "url": "https://agentic-user-mandate-protocol.github.io/spec/bindings/ucp-ap2",
+      "title": "UCP and AP2 Binding"
+    }
+  ]
+}

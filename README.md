@@ -23,7 +23,9 @@ npm run build
 
 ## Test
 
-The tests run against the sibling `conformance/fixtures` corpus.
+The tests prefer the sibling `conformance/fixtures` corpus when this workspace
+is cloned end to end. CI falls back to the pinned
+`tests/fixtures/conformance` snapshot so this repo can validate itself.
 
 ```bash
 npm test

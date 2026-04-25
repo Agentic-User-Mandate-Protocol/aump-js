@@ -1,0 +1,16 @@
+{
+  "name": "Example Buyer Agent",
+  "url": "https://agent.example.com/a2a",
+  "capabilities": {
+    "extensions": [
+      {
+        "uri": "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a",
+        "description": "Supports AUMP mandate references and action evaluation.",
+        "required": false,
+        "params": {
+          "versions": ["0.1.0"]
+        }
+      }
+    ]
+  }
+}

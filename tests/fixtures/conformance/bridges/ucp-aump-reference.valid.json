@@ -1,0 +1,11 @@
+{
+  "aump": {
+    "mandate_id": "aump_mnd_shop_001",
+    "mandate_hash": "sha256-example",
+    "version": "0.1.0"
+  },
+  "checkout": {
+    "id": "checkout_123",
+    "status": "incomplete"
+  }
+}

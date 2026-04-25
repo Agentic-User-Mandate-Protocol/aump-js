@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -11,7 +11,11 @@ import {
   validateSchema,
 } from "../dist/index.js";
 
-const fixtures = join(process.cwd(), "..", "conformance", "fixtures");
+const workspaceFixtures = join(process.cwd(), "..", "conformance", "fixtures");
+const snapshotFixtures = join(process.cwd(), "tests", "fixtures", "conformance");
+const fixtures = existsSync(join(workspaceFixtures, "manifest.json"))
+  ? workspaceFixtures
+  : snapshotFixtures;
 
 function loadJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));

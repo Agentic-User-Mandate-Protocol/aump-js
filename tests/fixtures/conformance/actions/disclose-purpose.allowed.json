@@ -1,0 +1,11 @@
+{
+  "type": "make_offer",
+  "summary": "Explain the buyer is looking for low-cost creative supplies.",
+  "counterparty": "seller_123",
+  "disclosures": [
+    {
+      "field": "purpose.summary",
+      "content": "I am looking for used creative supplies."
+    }
+  ]
+}

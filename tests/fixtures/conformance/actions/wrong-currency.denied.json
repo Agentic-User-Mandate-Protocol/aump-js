@@ -1,0 +1,9 @@
+{
+  "type": "accept_deal",
+  "summary": "Accept an offer denominated in EUR.",
+  "counterparty": "seller_123",
+  "amount": {
+    "currency": "EUR",
+    "total_minor": 300
+  }
+}

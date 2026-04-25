@@ -1,0 +1,9 @@
+{
+  "type": "accept_deal",
+  "summary": "Accept seller offer for 7 USD.",
+  "counterparty": "seller_123",
+  "amount": {
+    "currency": "USD",
+    "total_minor": 700
+  }
+}

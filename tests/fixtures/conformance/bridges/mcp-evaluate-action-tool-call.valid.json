@@ -1,0 +1,23 @@
+{
+  "jsonrpc": "2.0",
+  "id": "call_001",
+  "method": "tools/call",
+  "params": {
+    "name": "aump.evaluate_action",
+    "arguments": {
+      "_meta": {
+        "org.agentic-user-mandate-protocol/aump_mandate_id": "aump_mnd_market_buyer_001",
+        "org.agentic-user-mandate-protocol/aump_mandate_hash": "sha256-example"
+      },
+      "mandate_ref": {
+        "id": "aump_mnd_market_buyer_001",
+        "hash": "sha256-example",
+        "version": "0.1.0"
+      },
+      "proposed_action": {
+        "type": "accept_deal",
+        "summary": "Accept seller offer for 19 ping pong balls."
+      }
+    }
+  }
+}
