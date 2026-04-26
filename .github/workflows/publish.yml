@@ -1,22 +1,24 @@
-name: CI
+name: Publish
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  release:
+    types: [published]
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
-  sdk:
+  publish:
     runs-on: ubuntu-latest
+    environment: npm
     steps:
       - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:
           node-version: 24
+          registry-url: "https://registry.npmjs.org"
 
       - run: npm install -g npm@latest
 
@@ -27,3 +29,5 @@ jobs:
       - run: npm test
 
       - run: npm pack --dry-run --json
+
+      - run: npm publish

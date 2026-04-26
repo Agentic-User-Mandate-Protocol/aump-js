@@ -18,6 +18,14 @@ This package provides:
 npm install
 ```
 
+After publication, the CLI can be run globally or through `npx`:
+
+```bash
+npm install -g @agentic-user-mandate-protocol/aump
+aump --help
+npx @agentic-user-mandate-protocol/aump --help
+```
+
 ## Build
 
 ```bash
@@ -46,4 +54,16 @@ const result = evaluateAction(mandate, action, {
 if (result.decision === "requires_escalation") {
   // pause autonomous commitment and ask through trusted UI
 }
+```
+
+## CLI
+
+```bash
+aump validate mandate ../conformance/fixtures/mandates/marketplace-buyer.valid.json
+aump validate-evidence \
+  --mandate ../conformance/fixtures/mandates/marketplace-buyer.valid.json \
+  --event ../conformance/fixtures/events/deal-accepted.valid.json
+aump evaluate-action \
+  --mandate ../conformance/fixtures/mandates/marketplace-buyer.valid.json \
+  --action ../conformance/fixtures/actions/accept-ping-pong.allowed.json
 ```
