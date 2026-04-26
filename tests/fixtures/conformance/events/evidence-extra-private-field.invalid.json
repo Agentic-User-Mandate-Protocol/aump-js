@@ -1,0 +1,28 @@
+{
+  "aump": {
+    "version": "0.1.0",
+    "type": "evidence_event"
+  },
+  "id": "aump_ev_schema_private_field_001",
+  "mandate_ref": {
+    "id": "aump_mnd_market_buyer_001",
+    "hash": "sha256-e27c2259f3135f02e1803950caacd8a28504b06ef47c081844e068199dee8c52",
+    "version": "0.1.0"
+  },
+  "sequence": 4,
+  "created_at": "2026-04-25T18:03:00Z",
+  "event_type": "deal_accepted",
+  "summary": "This payload attempts to add a private field outside the schema.",
+  "result": "allowed",
+  "actor": {
+    "role": "runtime",
+    "id": "example-marketplace-runtime"
+  },
+  "privacy": {
+    "retention": "hashes",
+    "contains_private_fields": false
+  },
+  "private_fields": {
+    "negotiation.reservation_price_minor": 500
+  }
+}

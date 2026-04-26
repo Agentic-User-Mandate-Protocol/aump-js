@@ -104,7 +104,14 @@
   },
   "evidence": {
     "retention": "hashes",
-    "events_required": ["offer_sent", "counteroffer_received", "deal_accepted", "escalation_requested"],
+    "events_required": [
+      "offer_sent",
+      "counteroffer_received",
+      "deal_accepted",
+      "deal_denied",
+      "disclosure_evaluated",
+      "escalation_requested"
+    ],
     "transcript_hash_alg": "sha-256",
     "store_private_fields": false
   }

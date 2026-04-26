@@ -33,10 +33,12 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mandate", "profile"],
+      "required": ["mandate", "profile", "action_evaluation", "evidence_event"],
       "properties": {
         "mandate": { "type": "string", "format": "uri" },
-        "profile": { "type": "string", "format": "uri" }
+        "profile": { "type": "string", "format": "uri" },
+        "action_evaluation": { "type": "string", "format": "uri" },
+        "evidence_event": { "type": "string", "format": "uri" }
       }
     },
     "bindings": {
