@@ -5,11 +5,22 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "aump": "./dist/cli.js"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && mkdir -p dist/schemas && cp src/schemas/*.json dist/schemas/",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test",
     "test": "npm run build && node --test tests/*.test.mjs",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
@@ -22,7 +33,25 @@
     "typescript": "^5.9.0"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.14"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Agentic-User-Mandate-Protocol/aump-js.git"
+  },
+  "homepage": "https://usermandateprotocol.com/sdks/typescript/",
+  "bugs": {
+    "url": "https://github.com/Agentic-User-Mandate-Protocol/aump-js/issues"
+  },
+  "keywords": [
+    "agents",
+    "ai",
+    "mandates",
+    "protocol",
+    "conformance"
+  ],
   "license": "Apache-2.0"
 }

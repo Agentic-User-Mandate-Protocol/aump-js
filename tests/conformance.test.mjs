@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
@@ -99,4 +100,31 @@ test("evidence semantics match conformance fixtures", () => {
     validateEvidenceEvent(mandate, privateLeak, { now }).reason_codes,
     ["evidence_private_field_leak"],
   );
+});
+
+test("CLI validates schemas and evaluates actions", () => {
+  const cli = join(process.cwd(), "dist", "cli.js");
+  const mandate = join(fixtures, "mandates", "marketplace-buyer.valid.json");
+  const action = join(fixtures, "actions", "accept-ping-pong.allowed.json");
+  const evidence = join(fixtures, "events", "deal-accepted.valid.json");
+
+  execFileSync(process.execPath, [cli, "--help"]);
+  execFileSync(process.execPath, [cli, "validate", "mandate", mandate]);
+  execFileSync(process.execPath, [
+    cli,
+    "validate-evidence",
+    "--mandate",
+    mandate,
+    "--event",
+    evidence,
+  ]);
+  const output = execFileSync(process.execPath, [
+    cli,
+    "evaluate-action",
+    "--mandate",
+    mandate,
+    "--action",
+    action,
+  ]);
+  assert.equal(JSON.parse(output.toString()).decision, "allowed");
 });
