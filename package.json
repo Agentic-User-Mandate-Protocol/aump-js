@@ -12,7 +12,7 @@
     }
   },
   "bin": {
-    "aump": "./dist/cli.js"
+    "aump": "dist/cli.js"
   },
   "files": [
     "dist"
