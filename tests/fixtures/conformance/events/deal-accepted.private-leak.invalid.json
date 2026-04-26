@@ -1,0 +1,28 @@
+{
+  "aump": {
+    "version": "0.1.0",
+    "type": "evidence_event"
+  },
+  "id": "aump_ev_private_leak_001",
+  "mandate_ref": {
+    "id": "aump_mnd_market_buyer_001",
+    "hash": "sha256-e27c2259f3135f02e1803950caacd8a28504b06ef47c081844e068199dee8c52",
+    "version": "0.1.0"
+  },
+  "sequence": 2,
+  "created_at": "2026-04-25T18:01:00Z",
+  "event_type": "deal_accepted",
+  "summary": "Accepted the deal and retained private reservation price details.",
+  "result": "allowed",
+  "actor": {
+    "role": "runtime",
+    "id": "example-marketplace-runtime"
+  },
+  "reason_codes": [],
+  "privacy": {
+    "retention": "hashes",
+    "contains_private_fields": true,
+    "redaction": "none",
+    "protected_fields": ["negotiation.reservation_price_minor"]
+  }
+}

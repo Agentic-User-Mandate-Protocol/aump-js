@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-user-mandate-protocol.github.io/spec/schemas/evidence-event.schema.json",
+  "title": "AUMP Evidence Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "aump",
+    "id",
+    "mandate_ref",
+    "sequence",
+    "created_at",
+    "event_type",
+    "summary",
+    "result",
+    "actor",
+    "privacy"
+  ],
+  "properties": {
+    "aump": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "type"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "type": { "const": "evidence_event" }
+      }
+    },
+    "id": { "type": "string", "pattern": "^aump_ev_[A-Za-z0-9_-]+$" },
+    "mandate_ref": { "$ref": "#/$defs/mandateRef" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "event_type": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "result": {
+      "type": "string",
+      "enum": ["allowed", "requires_escalation", "denied", "received", "recorded", "error"]
+    },
+    "actor": { "$ref": "#/$defs/actor" },
+    "action": { "$ref": "#/$defs/actionSummary" },
+    "reason_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "downstream_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/downstreamRef" },
+      "default": []
+    },
+    "privacy": { "$ref": "#/$defs/privacy" },
+    "hashes": { "$ref": "#/$defs/hashes" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "number", "integer", "boolean", "null"]
+      }
+    }
+  },
+  "$defs": {
+    "mandateRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "hash", "version"],
+      "properties": {
+        "id": { "type": "string" },
+        "hash": { "type": "string", "pattern": "^sha256-[a-fA-F0-9]{64}$" },
+        "url": { "type": "string", "format": "uri" },
+        "version": { "type": "string" }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "id"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["principal", "agent", "runtime", "counterparty", "issuer", "verifier"]
+        },
+        "id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "actionSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "summary"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "hash": { "type": "string", "pattern": "^sha256-[a-fA-F0-9]{64}$" }
+      }
+    },
+    "downstreamRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "id"],
+      "properties": {
+        "protocol": { "type": "string", "minLength": 1 },
+        "id": { "type": "string", "minLength": 1 },
+        "hash": { "type": "string", "pattern": "^sha256-[a-fA-F0-9]{64}$" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retention", "contains_private_fields"],
+      "properties": {
+        "retention": {
+          "type": "string",
+          "enum": ["none", "summary_only", "hashes", "full_transcript"]
+        },
+        "contains_private_fields": { "type": "boolean" },
+        "redaction": {
+          "type": "string",
+          "enum": ["none", "summary", "hash", "field_redacted"]
+        },
+        "protected_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_hash": { "type": "string", "pattern": "^sha256-[a-fA-F0-9]{64}$" },
+        "previous_event_hash": { "type": "string", "pattern": "^sha256-[a-fA-F0-9]{64}$" },
+        "transcript_hash": { "type": "string", "pattern": "^sha256-[a-fA-F0-9]{64}$" }
+      }
+    }
+  }
+}

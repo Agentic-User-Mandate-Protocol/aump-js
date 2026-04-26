@@ -142,6 +142,8 @@
       "offer_sent",
       "counteroffer_received",
       "deal_accepted",
+      "deal_denied",
+      "disclosure_evaluated",
       "escalation_requested"
     ],
     "transcript_hash_alg": "sha-256",

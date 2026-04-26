@@ -7,6 +7,7 @@ import {
   evaluateAction,
   parseDate,
   validateBridge,
+  validateEvidenceEvent,
   validateMandateSemantics,
   validateSchema,
 } from "../dist/index.js";
@@ -26,8 +27,10 @@ test("bundled schemas validate conformance examples", () => {
     join(fixtures, "mandates", "marketplace-buyer.valid.json"),
   );
   const profile = loadJson(join(fixtures, "profiles", "aump-profile.valid.json"));
+  const evidence = loadJson(join(fixtures, "events", "deal-accepted.valid.json"));
   assert.deepEqual(validateSchema("mandate", mandate), []);
   assert.deepEqual(validateSchema("profile", profile), []);
+  assert.deepEqual(validateSchema("evidence-event", evidence), []);
 });
 
 test("mandate lifecycle matches conformance cases", () => {
@@ -80,4 +83,20 @@ test("bridge validation matches conformance bridge fixtures", () => {
   assert.equal(validateBridge(mcpTool, "mcp_tool").valid, true);
   assert.equal(validateBridge(a2a, "a2a_message").valid, true);
   assert.equal(validateBridge(ucpInvalid, "ucp_reference").valid, false);
+});
+
+test("evidence semantics match conformance fixtures", () => {
+  const now = parseDate("2026-04-25T18:00:00Z");
+  const mandate = loadJson(
+    join(fixtures, "mandates", "marketplace-buyer.valid.json"),
+  );
+  const valid = loadJson(join(fixtures, "events", "deal-accepted.valid.json"));
+  const privateLeak = loadJson(
+    join(fixtures, "events", "deal-accepted.private-leak.invalid.json"),
+  );
+  assert.equal(validateEvidenceEvent(mandate, valid, { now }).valid, true);
+  assert.deepEqual(
+    validateEvidenceEvent(mandate, privateLeak, { now }).reason_codes,
+    ["evidence_private_field_leak"],
+  );
 });

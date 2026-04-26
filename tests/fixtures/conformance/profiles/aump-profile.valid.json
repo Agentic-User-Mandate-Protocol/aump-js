@@ -11,7 +11,9 @@
   "supported_versions": ["0.1.0"],
   "schemas": {
     "mandate": "https://agentic-user-mandate-protocol.github.io/spec/schemas/mandate.schema.json",
-    "profile": "https://agentic-user-mandate-protocol.github.io/spec/schemas/profile.schema.json"
+    "profile": "https://agentic-user-mandate-protocol.github.io/spec/schemas/profile.schema.json",
+    "action_evaluation": "https://agentic-user-mandate-protocol.github.io/spec/schemas/action-evaluation.schema.json",
+    "evidence_event": "https://agentic-user-mandate-protocol.github.io/spec/schemas/evidence-event.schema.json"
   },
   "bindings": {
     "mcp": {

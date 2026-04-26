@@ -3,7 +3,7 @@
     "name": "AUMP v0.1 conformance",
     "version": "0.1.0",
     "spec_version": "0.1.0",
-    "spec_commit": "0ba91145bac23d69a7217c2804e5cf0c1c8b88aa"
+    "spec_commit": "d92e45181b9eefff45cdb7bc56add1a38e9cd65b"
   },
   "defaults": {
     "now": "2026-04-25T18:00:00Z"
@@ -40,6 +40,22 @@
       "schema": "profile",
       "path": "profiles/aump-profile.valid.json",
       "expect": "valid"
+    },
+    {
+      "id": "schema.evidence.deal_accepted.valid",
+      "category": "schema",
+      "title": "Deal acceptance evidence validates against the evidence event schema.",
+      "schema": "evidence-event",
+      "path": "events/deal-accepted.valid.json",
+      "expect": "valid"
+    },
+    {
+      "id": "schema.evidence.extra_private_field.invalid",
+      "category": "schema",
+      "title": "Evidence event rejects private fields outside the schema envelope.",
+      "schema": "evidence-event",
+      "path": "events/evidence-extra-private-field.invalid.json",
+      "expect": "invalid"
     },
     {
       "id": "schema.mandate.missing_aump.invalid",
@@ -153,6 +169,33 @@
       },
       "expect": "requires_escalation",
       "reason_codes": ["escalation_required"]
+    },
+    {
+      "id": "evidence.buyer.deal_accepted.valid",
+      "category": "evidence",
+      "title": "Deal acceptance evidence matches mandate, retention, and required event policy.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "path": "events/deal-accepted.valid.json",
+      "expect": "valid",
+      "reason_codes": []
+    },
+    {
+      "id": "evidence.private_field_leak.invalid",
+      "category": "evidence",
+      "title": "Summary-only evidence must not retain private fields.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "path": "events/deal-accepted.private-leak.invalid.json",
+      "expect": "invalid",
+      "reason_codes": ["evidence_private_field_leak"]
+    },
+    {
+      "id": "evidence.mandate_mismatch.invalid",
+      "category": "evidence",
+      "title": "Evidence mandate reference must match the mandate being evaluated.",
+      "mandate": "mandates/marketplace-buyer.valid.json",
+      "path": "events/deal-accepted.mandate-mismatch.invalid.json",
+      "expect": "invalid",
+      "reason_codes": ["evidence_mandate_mismatch"]
     },
     {
       "id": "bridge.mcp.evaluate_action_meta.valid",

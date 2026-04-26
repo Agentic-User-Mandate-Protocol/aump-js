@@ -6,6 +6,9 @@ This package provides:
 
 - bundled AUMP v0.1 JSON Schemas;
 - mandate lifecycle validation;
+- evidence event schema validation;
+- evidence event semantic validation against mandate references, retention
+  policy, and required event policy;
 - deterministic action evaluation;
 - MCP, A2A, and UCP/AP2 bridge validation helpers.
 

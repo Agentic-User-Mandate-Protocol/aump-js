@@ -93,6 +93,58 @@ export function validateMandateSemantics(
   };
 }
 
+export function validateEvidenceEvent(
+  mandate: Record<string, any>,
+  event: Record<string, any>,
+  options: { now: Date },
+): { valid: boolean; reason_codes: string[]; paths: string[] } {
+  const reasonCodes: string[] = [];
+  const paths: string[] = [];
+
+  const mandateResult = validateMandateSemantics(mandate, options);
+  if (!mandateResult.valid) {
+    reasonCodes.push(...mandateResult.reason_codes);
+    paths.push(...mandateResult.paths);
+  }
+
+  const mandateRef = event.mandate_ref ?? {};
+  const mandateIdMatches = mandateRef.id === mandate.id;
+  if (!mandateIdMatches) {
+    reasonCodes.push("evidence_mandate_mismatch");
+    paths.push("$.mandate_ref.id");
+  }
+  if (mandateIdMatches && mandateRef.hash !== mandateHash(mandate)) {
+    reasonCodes.push("evidence_mandate_hash_mismatch");
+    paths.push("$.mandate_ref.hash");
+  }
+
+  const evidencePolicy = mandate.evidence ?? {};
+  const requiredEvents = new Set(evidencePolicy.events_required ?? []);
+  if (requiredEvents.size > 0 && !requiredEvents.has(event.event_type)) {
+    reasonCodes.push("evidence_event_type_not_required");
+    paths.push("$.event_type");
+  }
+
+  const privacy = event.privacy ?? {};
+  if (evidencePolicy.retention && privacy.retention !== evidencePolicy.retention) {
+    reasonCodes.push("evidence_retention_mismatch");
+    paths.push("$.privacy.retention");
+  }
+  if (
+    evidencePolicy.retention !== "full_transcript" &&
+    privacy.contains_private_fields
+  ) {
+    reasonCodes.push("evidence_private_field_leak");
+    paths.push("$.privacy.contains_private_fields");
+  }
+
+  return {
+    valid: reasonCodes.length === 0,
+    reason_codes: stableUnique(reasonCodes),
+    paths: stableUnique(paths),
+  };
+}
+
 export function evaluateAction(
   mandate: Record<string, any>,
   action: Record<string, any>,
@@ -167,13 +219,14 @@ export function evaluateAction(
 }
 
 export function validateSchema(
-  schemaName: "mandate" | "profile" | "action-evaluation",
+  schemaName: "mandate" | "profile" | "action-evaluation" | "evidence-event",
   payload: unknown,
 ): string[] {
   const schemaFile = {
     mandate: "mandate.schema.json",
     profile: "profile.schema.json",
     "action-evaluation": "action-evaluation.schema.json",
+    "evidence-event": "evidence-event.schema.json",
   }[schemaName];
   const schemaPath = fileURLToPath(new URL(`./schemas/${schemaFile}`, import.meta.url));
   const schema = JSON.parse(readFileSync(schemaPath, "utf8"));

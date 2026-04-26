@@ -1,0 +1,42 @@
+{
+  "aump": {
+    "version": "0.1.0",
+    "type": "evidence_event"
+  },
+  "id": "aump_ev_deal_accepted_001",
+  "mandate_ref": {
+    "id": "aump_mnd_market_buyer_001",
+    "hash": "sha256-e27c2259f3135f02e1803950caacd8a28504b06ef47c081844e068199dee8c52",
+    "version": "0.1.0"
+  },
+  "sequence": 1,
+  "created_at": "2026-04-25T18:00:00Z",
+  "event_type": "deal_accepted",
+  "summary": "Accepted 19 ping pong balls for 3 USD after AUMP evaluation returned allowed.",
+  "result": "allowed",
+  "actor": {
+    "role": "runtime",
+    "id": "example-marketplace-runtime"
+  },
+  "action": {
+    "type": "accept_deal",
+    "summary": "Accept seller offer for 19 ping pong balls.",
+    "hash": "sha256-0bd0c637ff093318d0069391f8ecf9b6946d2301f0b5ad4226f1d75ec81b8325"
+  },
+  "reason_codes": [],
+  "downstream_refs": [
+    {
+      "protocol": "mcp",
+      "id": "call_1"
+    },
+    {
+      "protocol": "marketplace",
+      "id": "listing_ping_pong_balls_001"
+    }
+  ],
+  "privacy": {
+    "retention": "hashes",
+    "contains_private_fields": false,
+    "redaction": "hash"
+  }
+}
