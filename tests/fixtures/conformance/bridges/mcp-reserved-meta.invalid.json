@@ -4,11 +4,10 @@
   "method": "tools/call",
   "params": {
     "name": "aump.evaluate_action",
-    "arguments": {
-      "_meta": {
-        "io.modelcontextprotocol/aump_mandate_id": "aump_mnd_market_buyer_001",
-        "org.agentic-user-mandate-protocol/aump_mandate_hash": "sha256-example"
-      }
+    "_meta": {
+      "io.modelcontextprotocol/aump_mandate_id": "aump_mnd_market_buyer_001",
+      "org.agentic-user-mandate-protocol/aump_mandate_hash": "sha256-example",
+      "org.agentic-user-mandate-protocol/aump_version": "0.1.0"
     }
   }
 }

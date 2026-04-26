@@ -1,0 +1,31 @@
+{
+  "name": "aump.evaluate_action",
+  "description": "Evaluate a proposed action against an AUMP mandate.",
+  "inputSchema": {
+    "type": "object",
+    "required": ["mandate_ref", "proposed_action"],
+    "properties": {
+      "mandate_ref": { "type": "object" },
+      "proposed_action": { "type": "object" },
+      "context": { "type": "object" }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "required": ["decision", "reason_codes"],
+    "properties": {
+      "decision": {
+        "enum": ["allowed", "denied", "requires_escalation"]
+      },
+      "reason_codes": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    }
+  },
+  "annotations": {
+    "readOnlyHint": true,
+    "destructiveHint": false,
+    "idempotentHint": true
+  }
+}

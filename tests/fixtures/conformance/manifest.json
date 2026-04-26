@@ -3,7 +3,7 @@
     "name": "AUMP v0.1 conformance",
     "version": "0.1.0",
     "spec_version": "0.1.0",
-    "spec_commit": "c8abb290f97e14d69a0cdb4a28b45d2e63522aef"
+    "spec_commit": "0ba91145bac23d69a7217c2804e5cf0c1c8b88aa"
   },
   "defaults": {
     "now": "2026-04-25T18:00:00Z"
@@ -163,6 +163,14 @@
       "expect": "valid"
     },
     {
+      "id": "bridge.mcp.evaluate_action_tool.valid",
+      "category": "bridge",
+      "title": "MCP evaluate_action tool advertises schemas and non-destructive idempotent annotations.",
+      "bridge_type": "mcp_tool",
+      "path": "bridges/mcp-evaluate-action-tool.valid.json",
+      "expect": "valid"
+    },
+    {
       "id": "bridge.mcp.reserved_meta.invalid",
       "category": "bridge",
       "title": "MCP bridge rejects reserved MCP metadata prefixes for AUMP keys.",
@@ -185,6 +193,14 @@
       "bridge_type": "a2a_message",
       "path": "bridges/a2a-message-mandate-ref.valid.json",
       "expect": "valid"
+    },
+    {
+      "id": "bridge.a2a.full_mandate.invalid",
+      "category": "bridge",
+      "title": "A2A message metadata must not embed the full private AUMP mandate.",
+      "bridge_type": "a2a_message",
+      "path": "bridges/a2a-message-full-mandate.invalid.json",
+      "expect": "invalid"
     },
     {
       "id": "bridge.ucp.aump_reference.valid",

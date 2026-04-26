@@ -67,9 +67,17 @@ test("bridge validation matches conformance bridge fixtures", () => {
   const mcp = loadJson(
     join(fixtures, "bridges", "mcp-evaluate-action-tool-call.valid.json"),
   );
+  const mcpTool = loadJson(
+    join(fixtures, "bridges", "mcp-evaluate-action-tool.valid.json"),
+  );
+  const a2a = loadJson(
+    join(fixtures, "bridges", "a2a-message-mandate-ref.valid.json"),
+  );
   const ucpInvalid = loadJson(
     join(fixtures, "bridges", "ucp-full-mandate.invalid.json"),
   );
   assert.equal(validateBridge(mcp, "mcp_meta").valid, true);
+  assert.equal(validateBridge(mcpTool, "mcp_tool").valid, true);
+  assert.equal(validateBridge(a2a, "a2a_message").valid, true);
   assert.equal(validateBridge(ucpInvalid, "ucp_reference").valid, false);
 });

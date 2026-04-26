@@ -30,8 +30,10 @@ export const AUMP_META_ID =
   "org.agentic-user-mandate-protocol/aump_mandate_id";
 export const AUMP_META_HASH =
   "org.agentic-user-mandate-protocol/aump_mandate_hash";
+export const AUMP_META_VERSION =
+  "org.agentic-user-mandate-protocol/aump_version";
 export const AUMP_A2A_EXTENSION_URI =
-  "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a";
+  "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a/v0.1";
 
 const COMMITMENT_ACTIONS = new Set([
   "accept_deal",
@@ -187,9 +189,15 @@ export function validateSchema(
 
 export function validateBridge(
   payload: Record<string, any>,
-  bridgeType: "mcp_meta" | "a2a_extension" | "a2a_message" | "ucp_reference",
+  bridgeType:
+    | "mcp_meta"
+    | "mcp_tool"
+    | "a2a_extension"
+    | "a2a_message"
+    | "ucp_reference",
 ): { valid: boolean; errors: string[] } {
   if (bridgeType === "mcp_meta") return validateMcpMeta(payload);
+  if (bridgeType === "mcp_tool") return validateMcpTool(payload);
   if (bridgeType === "a2a_extension") return validateA2aExtension(payload);
   if (bridgeType === "a2a_message") return validateA2aMessage(payload);
   return validateUcpReference(payload);
@@ -311,7 +319,7 @@ function validateMcpMeta(payload: Record<string, any>): {
   valid: boolean;
   errors: string[];
 } {
-  const meta = findFirstMeta(payload);
+  const meta = findMcpRequestMeta(payload);
   const errors: string[] = [];
   if (!meta) return { valid: false, errors: ["missing MCP _meta object"] };
   for (const key of Object.keys(meta)) {
@@ -324,6 +332,38 @@ function validateMcpMeta(payload: Record<string, any>): {
   }
   if (!meta[AUMP_META_ID]) errors.push(`missing ${AUMP_META_ID}`);
   if (!meta[AUMP_META_HASH]) errors.push(`missing ${AUMP_META_HASH}`);
+  if (!meta[AUMP_META_VERSION]) errors.push(`missing ${AUMP_META_VERSION}`);
+  return { valid: errors.length === 0, errors };
+}
+
+function validateMcpTool(payload: Record<string, any>): {
+  valid: boolean;
+  errors: string[];
+} {
+  const errors: string[] = [];
+  if (payload.name !== "aump.evaluate_action") {
+    errors.push("MCP tool name must be aump.evaluate_action");
+  }
+  for (const field of ["inputSchema", "outputSchema"]) {
+    if (!payload[field] || typeof payload[field] !== "object") {
+      errors.push(`missing ${field} object`);
+    }
+  }
+
+  const annotations = payload.annotations;
+  if (!annotations || typeof annotations !== "object") {
+    errors.push("missing annotations object");
+  } else {
+    if (annotations.readOnlyHint !== true) {
+      errors.push("aump.evaluate_action must be readOnlyHint=true");
+    }
+    if (annotations.destructiveHint !== false) {
+      errors.push("aump.evaluate_action must be destructiveHint=false");
+    }
+    if (annotations.idempotentHint !== true) {
+      errors.push("aump.evaluate_action must be idempotentHint=true");
+    }
+  }
   return { valid: errors.length === 0, errors };
 }
 
@@ -331,26 +371,66 @@ function validateA2aExtension(payload: Record<string, any>): {
   valid: boolean;
   errors: string[];
 } {
+  const errors: string[] = [];
+  for (const field of ["name", "version", "url"]) {
+    if (!payload[field]) errors.push(`missing Agent Card ${field}`);
+  }
+  if (!Array.isArray(payload.skills) || payload.skills.length === 0) {
+    errors.push("Agent Card must advertise at least one skill");
+  }
+  if (!Array.isArray(payload.defaultInputModes)) {
+    errors.push("missing defaultInputModes array");
+  }
+  if (!Array.isArray(payload.defaultOutputModes)) {
+    errors.push("missing defaultOutputModes array");
+  }
+
   const extensions = payload.capabilities?.extensions;
   if (!Array.isArray(extensions)) {
     return { valid: false, errors: ["capabilities.extensions must be an array"] };
   }
-  const valid = extensions.some((extension) => extension.uri === AUMP_A2A_EXTENSION_URI);
-  return {
-    valid,
-    errors: valid ? [] : ["missing AUMP A2A AgentExtension declaration"],
-  };
+  for (const extension of extensions) {
+    if (extension?.uri !== AUMP_A2A_EXTENSION_URI) continue;
+    if (extension.required !== false) {
+      errors.push("AUMP A2A extension must be optional by default");
+    }
+    if (!extension.params?.versions?.includes("0.1.0")) {
+      errors.push("AUMP A2A extension params.versions must include 0.1.0");
+    }
+    return { valid: errors.length === 0, errors };
+  }
+  errors.push("missing AUMP A2A AgentExtension declaration");
+  return { valid: false, errors };
 }
 
 function validateA2aMessage(payload: Record<string, any>): {
   valid: boolean;
   errors: string[];
 } {
-  const metadata = payload.message?.metadata ?? {};
   const errors: string[] = [];
-  if (!metadata.aump_mandate_id) errors.push("missing message.metadata.aump_mandate_id");
-  if (!metadata.aump_mandate_hash) {
-    errors.push("missing message.metadata.aump_mandate_hash");
+  const message =
+    payload.message && typeof payload.message === "object" ? payload.message : payload;
+  if (!message.messageId) errors.push("missing message.messageId");
+
+  const activeExtensions = splitExtensionHeader(payload.headers?.["A2A-Extensions"]);
+  if (!activeExtensions.has(AUMP_A2A_EXTENSION_URI)) {
+    errors.push("missing A2A-Extensions activation for AUMP");
+  }
+  if (!Array.isArray(message.extensions) || !message.extensions.includes(AUMP_A2A_EXTENSION_URI)) {
+    errors.push("missing message.extensions AUMP URI");
+  }
+
+  const metadata = message.metadata ?? {};
+  const aumpMetadata = metadata[AUMP_A2A_EXTENSION_URI];
+  if (!aumpMetadata || typeof aumpMetadata !== "object") {
+    errors.push("missing extension-scoped AUMP message metadata");
+    return { valid: false, errors };
+  }
+  if (aumpMetadata.mandate) {
+    errors.push("A2A message must not embed full private AUMP mandate");
+  }
+  for (const field of ["mandate_id", "mandate_hash", "version"]) {
+    if (!aumpMetadata[field]) errors.push(`missing A2A AUMP metadata ${field}`);
   }
   return { valid: errors.length === 0, errors };
 }
@@ -360,42 +440,41 @@ function validateUcpReference(payload: Record<string, any>): {
   errors: string[];
 } {
   const errors: string[] = [];
-  const aump = findUcpAumpRef(payload);
-  if (!aump) return { valid: false, errors: ["missing aump reference object"] };
+  const meta = payload.meta;
+  if (!meta || typeof meta !== "object") {
+    return { valid: false, errors: ["missing UCP meta object"] };
+  }
+  if (!meta["ucp-agent"]?.profile) {
+    errors.push('missing meta["ucp-agent"].profile');
+  }
+  const aump = meta.aump;
+  if (!aump || typeof aump !== "object") {
+    errors.push("missing meta.aump reference object");
+    return { valid: false, errors };
+  }
+  if (payload.ap2?.aump) {
+    errors.push("AUMP references must not be placed under AP2 ap2 namespace");
+  }
   if (aump.mandate) {
     errors.push("UCP/AP2 bridge must not embed full private AUMP mandate");
   }
   for (const field of ["mandate_id", "mandate_hash", "version"]) {
-    if (!aump[field]) errors.push(`missing aump.${field}`);
+    if (!aump[field]) errors.push(`missing meta.aump.${field}`);
   }
   return { valid: errors.length === 0, errors };
 }
 
-function findUcpAumpRef(payload: Record<string, any>): Record<string, any> | undefined {
-  if (payload.aump && typeof payload.aump === "object") {
-    return payload.aump;
+function findMcpRequestMeta(payload: Record<string, any>): Record<string, any> | undefined {
+  if (payload.params?._meta && typeof payload.params._meta === "object") {
+    return payload.params._meta;
   }
-  if (payload.meta?.aump && typeof payload.meta.aump === "object") {
-    return payload.meta.aump;
-  }
+  if (payload._meta && typeof payload._meta === "object") return payload._meta;
   return undefined;
 }
 
-function findFirstMeta(value: unknown): Record<string, any> | undefined {
-  if (Array.isArray(value)) {
-    for (const child of value) {
-      const found = findFirstMeta(child);
-      if (found) return found;
-    }
-  } else if (value && typeof value === "object") {
-    const record = value as Record<string, any>;
-    if (record._meta && typeof record._meta === "object") return record._meta;
-    for (const child of Object.values(record)) {
-      const found = findFirstMeta(child);
-      if (found) return found;
-    }
-  }
-  return undefined;
+function splitExtensionHeader(value: unknown): Set<string> {
+  if (typeof value !== "string") return new Set();
+  return new Set(value.split(",").map((part) => part.trim()).filter(Boolean));
 }
 
 function stableUnique(values: string[]): string[] {

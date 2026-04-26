@@ -1,10 +1,12 @@
 {
   "name": "Example Buyer Agent",
+  "description": "Agent that negotiates under portable user mandates.",
+  "version": "0.1.0",
   "url": "https://agent.example.com/a2a",
   "capabilities": {
     "extensions": [
       {
-        "uri": "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a",
+        "uri": "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a/v0.1",
         "description": "Supports AUMP mandate references and action evaluation.",
         "required": false,
         "params": {
@@ -12,5 +14,15 @@
         }
       }
     ]
-  }
+  },
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["text/plain", "application/json"],
+  "skills": [
+    {
+      "id": "mandated-negotiation",
+      "name": "Mandated negotiation",
+      "description": "Negotiate while enforcing an AUMP mandate.",
+      "tags": ["aump", "negotiation"]
+    }
+  ]
 }

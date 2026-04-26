@@ -4,11 +4,12 @@
   "method": "tools/call",
   "params": {
     "name": "aump.evaluate_action",
+    "_meta": {
+      "org.agentic-user-mandate-protocol/aump_mandate_id": "aump_mnd_market_buyer_001",
+      "org.agentic-user-mandate-protocol/aump_mandate_hash": "sha256-example",
+      "org.agentic-user-mandate-protocol/aump_version": "0.1.0"
+    },
     "arguments": {
-      "_meta": {
-        "org.agentic-user-mandate-protocol/aump_mandate_id": "aump_mnd_market_buyer_001",
-        "org.agentic-user-mandate-protocol/aump_mandate_hash": "sha256-example"
-      },
       "mandate_ref": {
         "id": "aump_mnd_market_buyer_001",
         "hash": "sha256-example",

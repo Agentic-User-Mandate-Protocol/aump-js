@@ -1,12 +1,16 @@
 {
   "spec_repository": "https://github.com/Agentic-User-Mandate-Protocol/spec",
-  "spec_commit": "c8abb290f97e14d69a0cdb4a28b45d2e63522aef",
+  "spec_commit": "0ba91145bac23d69a7217c2804e5cf0c1c8b88aa",
   "spec_version": "0.1.0",
   "snapshot_date": "2026-04-25",
   "included": [
     "schemas/mandate.schema.json",
     "schemas/profile.schema.json",
     "schemas/action-evaluation.schema.json",
+    "bindings/a2a.md",
+    "bindings/mcp.md",
+    "bindings/ucp-ap2.md",
+    "interop-audit.md",
     "examples/profile.json",
     "examples/marketplace-buyer.json",
     "examples/marketplace-seller.json",

@@ -24,7 +24,11 @@
       "supported": true,
       "endpoint": "https://agent.example.com/.well-known/agent-card.json",
       "spec": "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a",
-      "methods": ["message.metadata.aump_mandate_id"]
+      "methods": [
+        "A2A-Extensions",
+        "message.extensions",
+        "message.metadata.https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a/v0.1"
+      ]
     },
     "ucp_ap2": {
       "supported": true,

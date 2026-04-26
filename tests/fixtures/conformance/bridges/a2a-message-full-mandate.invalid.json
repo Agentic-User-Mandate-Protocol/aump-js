@@ -3,7 +3,7 @@
     "A2A-Extensions": "https://agentic-user-mandate-protocol.github.io/spec/bindings/a2a/v0.1"
   },
   "message": {
-    "messageId": "msg_001",
+    "messageId": "msg_002",
     "role": "user",
     "parts": [
       {
@@ -18,7 +18,10 @@
         "mandate_id": "aump_mnd_market_buyer_001",
         "mandate_hash": "sha256-example",
         "version": "0.1.0",
-        "evidence_id": "ev_001"
+        "mandate": {
+          "id": "aump_mnd_market_buyer_001",
+          "private": true
+        }
       }
     }
   }
